@@ -1,10 +1,10 @@
-#All files were unzipped to the E drive since downloading through the URL for
-#websites starting with https:// was not feasible on Windows
+####All files were unzipped to the E drive since downloading through the URL for
+####websites starting with https:// was not feasible on Windows
 
-#Set working directory
+####Set working directory
 setwd("e:/GetCleanData/")
 
-#Merging the test and training dataset to create one dataset
+####Merging the test and training dataset to create one dataset
 features = read.delim("./data/uci/features.txt", header=FALSE, sep="")
 names <- features$V2
 
@@ -23,14 +23,15 @@ train_dataframe <-cbind(subjtrain, ytrain, Xtrain)
 test_train_df <- rbind(test_dataframe, train_dataframe)
 
 
-#Extracts measurements on the mean and standard deviation for each measurement
+####Extracts measurements on the mean and standard deviation for each measurement
 ReqCols <- c("mean\\(\\)[-]", "std\\(\\)[-]")
 colnames <- unique (grep(paste(ReqCols,collapse="|"), features$V2, value=FALSE))
-#Subset dataset with column names containing mean & std deviation
+
+####Subset dataset with column names containing mean & std deviation
 test_train_dfss <- subset(test_train_df[, c(1,2,3,4,5,6,7,8,43,44,45,46,47,48,83,84,85,86,87,88,123,124,125,126,127,128,163,164,165,166,167,168,268,269,270,271,272,273,347,348,349,350,351,352,426,427, 428,429,430,431)])
 names(test_train_dfss)
 
-#Creating a new colummn for naming activity
+####Creating a new colummn for naming activity
 test_train_df$Activity = ifelse(test_train_df$Activity_ID == 1, "walking",
                                 ifelse(test_train_df$Activity_ID ==2, "walking upstairs",
                                        ifelse(test_train_df$Activity_ID ==3, "walking downstairs",
@@ -38,6 +39,10 @@ test_train_df$Activity = ifelse(test_train_df$Activity_ID == 1, "walking",
                                                      ifelse(test_train_df$Activity_ID ==5, "standing","laying")))))
 
 
+
+#####Create tidy data set
+install.packages("reshape2")
+library(reshape2)
 ttmelt <- melt(test_train_df, id=c(1:563), measure.vars=c("Activity_ID","Subject_ID"))
 head(ttmelt, n=3)
 ttdata <- dcast(ttmelt, Activity_ID ~ variable, mean)
